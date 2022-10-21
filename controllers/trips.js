@@ -55,6 +55,21 @@ const deleteTrip = async (req, res) => {
   }
 }
 
+const createActivityPlan = async (req, res) => {
+  try {
+    req.body.owner = req.user.profile
+    const trip = await Trip.findById(req.params.id)
+    trip.activityPlans.push(req.body)
+    await trip.save()
+    const newActivityPlan = trip.activityPlans[trip.activityPlans.length - 1]
+    const profile = await Profile.findById(req.user.profile)
+    newActivityPlan.owner = profile
+    res.status(201).json(newActivityPlan)
+  } catch (err) {
+    res.status(500).json(err)
+  }
+}
+
 
 export {
   create,
@@ -62,4 +77,5 @@ export {
   show,
   update,
   deleteTrip as delete,
+  createActivityPlan
 }
